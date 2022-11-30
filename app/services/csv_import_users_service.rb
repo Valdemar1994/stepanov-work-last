@@ -27,7 +27,7 @@ class CsvImportUsersService
           if user.has_role? :manager
             PoolContainer.create!(user: user)
           end
-          
+
           @message.notice += "User #{user.email} created; "
             
           speciality_item = Speciality.find_or_create_by!(name: speciality.strip)
@@ -40,7 +40,7 @@ class CsvImportUsersService
           full_name_arr = full_name.split(' ')
           first_name = full_name_arr[0]
           last_name = full_name_arr[1]
-            
+
           Profile.find_or_create_by!(first_name: first_name.strip, last_name: last_name.strip,
           user_id: user.id, speciality_id: speciality_item.id, grade_id: grade_item.id)
         end

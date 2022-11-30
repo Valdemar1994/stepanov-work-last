@@ -1,14 +1,17 @@
 <table class="shadow-lg bg-white border-separate text-left mx-auto">
   <tr>
     <th class="bg-green-200 border text-center px-6 py-3">Id</th> 
-    <th class="bg-green-200 border text-center px-6 py-3">Snapshot</th>
-    <th class="bg-green-200 border text-center px-6 py-3">Check tree</th> 
+    <th class="bg-green-200 border text-center px-6 py-3">Create time</th>
+    <th class="bg-green-200 border text-center px-6 py-3">Creator</th>
+    <th class="bg-green-200 border text-center px-6 py-3">Check tree</th>
+    <th class="bg-green-200 border text-center px-6 py-3">Delete</th> 
   </tr>
     
   <% @snapshots.each do |snapshot| %>
     <tr>
       <td class="border px-6 py-3"><%= snapshot.id %></td>
       <td class="border px-6 py-3"><%= snapshot.identifier %></td>
+      <td class="border px-6 py-3"><%= snapshot.user.profile.first_name %></td>
       <td class="border px-6 py-3"> 
         <%= link_to snapshot_path(snapshot), class:"text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200",
         data: { turbo_method: :get } do %>
@@ -21,6 +24,18 @@
           </svg>
         <% end %>
       </td>
+      <td class="border px-6 py-3"> 
+          <%= link_to snapshot_path(snapshot), class:"text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200",
+          data: { turbo_method: :delete, turbo_confirm: 'Delete snapshot?' } do %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-400 m-auto", fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25
+            2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3
+            3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621
+            0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            </svg>
+          <% end %>
+        </td>
     </tr>      
   <% end %>
 </table>

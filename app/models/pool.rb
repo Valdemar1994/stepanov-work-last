@@ -36,5 +36,4 @@ class Pool < ApplicationRecord
     output << "}\n"
     output.string
   end
-  
 end

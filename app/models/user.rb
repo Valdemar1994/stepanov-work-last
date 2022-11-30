@@ -7,5 +7,8 @@ class User < ApplicationRecord
 
   has_one :profile
   has_one :pool_container
-  
+
+  def pool_snapshots
+    ActiveSnapshot::Snapshot.where(user: self).includes(:user)
+  end
 end

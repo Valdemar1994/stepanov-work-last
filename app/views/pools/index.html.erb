@@ -82,16 +82,6 @@
     <th><%= paginate @pools %></th> 
   </table>
 
-  <div class="h-10 px-5 m-2 flex justify">
-    <%= button_to snapshots_path(root_id: @pool_root), method: :post,
-    class:"text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 
-    hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 
-    focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium 
-    rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" do %>
-      <p> Create Snapshot! </p>
-    <% end %>
-  </div>
-
   <div class="justify-center flex items-center mt-8">
     <% if @pools.present? %>
       <img src='<%=pool_graph_pools_path(r: Time.now.to_i)%>'>

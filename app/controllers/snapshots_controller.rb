@@ -1,22 +1,20 @@
 class SnapshotsController < BaseController
 
   def index
-    @snapshots = ActiveSnapshot::Snapshot.all.page(params[:page]).per(5)
+    @snapshots = current_user.pool_snapshots.page(params[:page]).per(5)
   end
   
   def show
-    @snapshots = ActiveSnapshot::Snapshot.all.page(params[:page]).per(5)
+    @snapshots = current_user.pool_snapshots.page(params[:page]).per(5)
     @snapshot = ActiveSnapshot::Snapshot.find(params[:id])
   end
 
-  def create
-    pool_parent = Pool.find(params[:root_id])
-    snapshot = pool_parent.create_snapshot!("Time: #{Time.new}
-      Creator: #{current_user.profile.first_name} #{current_user.profile.last_name}")
-    if snapshot.save
-      redirect_to root_path, notice: t('controllers.snapshots_controller.create.flash.notice')
+  def destroy
+    snapshot = ActiveSnapshot::Snapshot.find(params[:id])
+    if snapshot.destroy
+      redirect_to snapshots_path, notice: t('controllers.snapshots_controller.create.flash.notice')
     else
-      redirect_to root_path, alert: t('controllers.snapshots_controller.create.flash.alert')
+      redirect_to snapshots_path, alert: t('controllers.snapshots_controller.create.flash.alert')
     end
   end
 
