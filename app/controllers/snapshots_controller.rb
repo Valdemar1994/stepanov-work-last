@@ -1,7 +1,17 @@
 class SnapshotsController < BaseController
 
   def index
-    @snapshots = current_user.pool_snapshots.page(params[:page]).per(5)
+    @today = Date.today
+
+    year = params.dig(:date, :year)
+    month = Date::ABBR_MONTHNAMES[params.dig(:date, :month).to_i]
+
+    if year.present? && month.present?
+      date = "#{month} #{year}"
+      @snapshots = current_user.pool_snapshots_by_date(date).page(params[:page]).per(5)
+    else
+      @snapshots = current_user.pool_snapshots.page(params[:page]).per(5)
+    end
   end
   
   def show
