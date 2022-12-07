@@ -1,16 +1,18 @@
 class PoolsController < BaseController
 
   def index
+    binding.pry
     @pools = []
     @pool_root = nil
     @select_parents = []
     @select_children = []
+ 
+    @grades = Grade.all
+    @specialitys = Speciality.all
 
     if current_user.has_role? :manager || current_user.profile.pool.present?
-    
-      @pools = current_user.pool_container.pools.order(parent_id: :asc).page(params[:page]).per(5)
-        
-      @pool_root = current_user.pool_container.pools.root
+
+      @pools = current_user.pool_container.filtered_pools(filter_params).order(parent_id: :asc).page(params[:page]).per(5)
       
       @select_parents = current_user.pool_container.pools.includes(profile:
         [:grade]).decorate.map { |pool| [pool.full_name_and_grade, pool.id] }
@@ -66,6 +68,10 @@ class PoolsController < BaseController
 
   def pool_params
     params.require(:pool).permit(:id, :type, :profile_id, :parent_id)
+  end
+
+  def filter_params
+    params.slice(:grade, :speciality).permit!
   end
 
   def snapshot_service
