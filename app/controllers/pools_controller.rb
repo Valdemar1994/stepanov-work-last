@@ -1,7 +1,6 @@
 class PoolsController < BaseController
 
   def index
-    binding.pry
     @pools = []
     @pool_root = nil
     @select_parents = []
@@ -10,11 +9,14 @@ class PoolsController < BaseController
     @grades = Grade.all
     @specialitys = Speciality.all
 
+    @filter_params = filter_params
+    @current_pool = current_user.pool_container
+
     if current_user.has_role? :manager || current_user.profile.pool.present?
 
-      @pools = current_user.pool_container.filtered_pools(filter_params).order(parent_id: :asc).page(params[:page]).per(5)
-      
-      @select_parents = current_user.pool_container.pools.includes(profile:
+      @pools = @current_pool.filtered_pools(filter_params).order(parent_id: :asc).page(params[:page]).per(5)
+
+      @select_parents = @current_pool.pools.includes(profile:
         [:grade]).decorate.map { |pool| [pool.full_name_and_grade, pool.id] }
 
       @select_children = Profile.includes(:grade).available.decorate.map do |profile|
@@ -25,7 +27,7 @@ class PoolsController < BaseController
 
   def create
     params = pool_params.merge(pool_container_id: current_user.pool_container.id)
-
+    
     @pool = Pool.new(params)
 
     authorize @pool, policy_class: PoolPolicy
@@ -35,6 +37,16 @@ class PoolsController < BaseController
     else
       redirect_to root_path, alert: t('controllers.pools_controller.create.flash.alert')
     end
+  end
+
+  def edit
+    @pool = Pool.find(params[:id])
+  end
+
+  def update
+    @pool = Pool.find(params[:id])
+    @pool.update(pool_params)
+    redirect_to root_path
   end
 
   def destroy
@@ -53,25 +65,30 @@ class PoolsController < BaseController
 
   def pool_graph
     pools = []
+    filtered_ids = []
     if current_user.has_role? :manager
-      pools = current_user.pool_container.pools.includes(:profile)
+      user_pool_container = current_user.pool_container
+      pools = user_pool_container.pools.includes(:profile)
+      if filter_params[:grade_id].present? || filter_params[:speciality_id].present?
+        filtered_ids = user_pool_container.filtered_pools(filter_params).pluck(:profile_id)
+      end
     else
       pool = current_user.profile.pool
       if pool.present?
         pools = pool.pool_container.pools
       end
     end
-    send_file ::GraphGenerator.new.call(pools, current_user.profile.id)
+    send_file ::GraphGenerator.new.call(pools, current_user.profile.id, filtered_ids)
   end
 
   private
 
   def pool_params
-    params.require(:pool).permit(:id, :type, :profile_id, :parent_id)
+    params.require(:pool).permit(:id, :type, :profile_id, :parent_id, :pool_container_id)
   end
 
   def filter_params
-    params.slice(:grade, :speciality).permit!
+    params.slice(:grade_id, :speciality_id).permit!
   end
 
   def snapshot_service
