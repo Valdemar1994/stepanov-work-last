@@ -5,11 +5,11 @@ class PoolContainer < ApplicationRecord
 
   def filtered_pools(filter_params)
     
-    grade_id = filter_params[:grade]
-    speciality_id = filter_params[:speciality]
+    grade_id = filter_params[:grade_id]
+    speciality_id = filter_params[:speciality_id]
     
     pools_scope = pools
-  
+
     if grade_id.present? || speciality_id.present?
       profile_scope = Profile.all
 

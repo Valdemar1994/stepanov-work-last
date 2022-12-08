@@ -1,6 +1,6 @@
 <% if current_user.has_role? :manager %>
 
-  <div class="block p-6 rounded-lg shadow-lg bg-white w-1/2 m-auto mb-3">
+  <div class="block p-6 rounded-lg shadow-lg bg-white w-1/2 m-auto mb-3 ">
     <%= form_for Pool.new do |f| %>
 
       <div class="justify-center mb-6 flex items-center gap-1">
@@ -47,19 +47,19 @@
         <div class="text-center text-lg"> 
           Filtering by grade and specialization 
         </div>
-      <select name="grade">
+      <select name="grade_id">
         <option value="">all</option>
         <% @grades.each do |grade| %>
           <option value=<%= grade.id %>> <%= grade.name %> </option>
         <% end %>
       </select>
-      <select name="speciality">
+      <select name="speciality_id">
         <option value="">all</option>
         <% @specialitys.each do |speciality| %>
           <option value=<%= speciality.id %>> <%= speciality.name %> </option>
         <% end %>
       </select>
-      <input type="submit" value="Select date" class= "h-10 px-5 m-2 rounded-md border border-transparent 
+      <input type="submit" value="Select" class= "h-10 px-5 m-2 rounded-md border border-transparent 
        bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 
        focus:ring-blue-700 focus:ring-offset-2 gap-1" >
     </form>
@@ -68,7 +68,6 @@
   <table class="shadow-lg bg-white border-separate text-center mx-auto">
     <tr>
       <th class="bg-blue-100 border text-center px-6 py-3">ID</th> 
-      <th class="bg-blue-100 border text-center px-6 py-3">Parent id</th>
       <th class="bg-blue-100 border text-center px-6 py-3">Type</th>
       <th class="bg-blue-100 border text-center px-6 py-3">User Name</th>
       <th class="bg-blue-100 border text-center px-6 py-3">Grade</th>
@@ -76,10 +75,10 @@
       <th class="bg-blue-100 border text-center px-6 py-3 ">Email</th>
       <th class="bg-blue-100 border text-center px-6 py-3">Delete</th>
     </tr>
+    <tr>
     <% @pools.decorate.each do |pool| %>
       <tr>
         <td class="border px-6 py-3"><%= pool.id %></td>
-        <td class="border px-6 py-3"><%= pool.parent_id %></td>
         <td class="border px-6 py-3"><%= pool.type %></td>
         <td class="border px-6 py-3"><%= pool.full_name %></td>
         <td class="border px-6 py-3"><%= pool.full_grade %></td>
@@ -106,8 +105,9 @@
   </table>
 
   <div class="justify-center flex items-center mt-8">
-    <% if @pools.present? %>
-      <img src='<%=pool_graph_pools_path(r: Time.now.to_i)%>'>
+    <% if @current_pool.present? %>
+      <img src='<%=pool_graph_pools_path(r: Time.now.to_i, grade_id: @filter_params[:grade_id], 
+        speciality_id: @filter_params[:speciality_id])%>'>
     <% else %>
       <%= 'EMPTY TREE' %>
     <% end %>

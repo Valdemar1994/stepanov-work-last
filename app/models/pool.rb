@@ -18,7 +18,7 @@ class Pool < ApplicationRecord
     pools_for_update.each {|pool| pool.update(parent_id: profile.pool.parent_id)}
   end
 
-  def self.to_dot_digraph(tree_scope, highlight_id)
+  def self.to_dot_digraph(tree_scope, highlight_id, filtered_ids)
     id_to_instance = tree_scope.reduce({}) { |h, pool| h[pool.id] = pool; h }
     output = StringIO.new
     output << "digraph G {\n"
@@ -27,8 +27,16 @@ class Pool < ApplicationRecord
         output << "  \"#{pool._ct_parent_id}\" -> \"#{pool._ct_id}\" [label = #{pool.type}]\n"
       end
 
-      if highlight_id == pool.profile.id  
-        output << "  \"#{pool._ct_id}\" [label=\"#{pool.to_digraph_label}\" color=\"green\" fontcolor=\"green\"]\n"
+      graph_entry_string = lambda do |pool, color|
+        " \"#{pool._ct_id}\" [label=\"#{pool.to_digraph_label}\" color=\"#{color}\" fontcolor=\"#{color}\"]\n"
+      end
+
+      if highlight_id == pool.profile.id && filtered_ids.include?(pool.profile.id)
+        output <<  graph_entry_string.(pool, 'blue')
+      elsif highlight_id == pool.profile.id
+        output <<  graph_entry_string.(pool, 'green')
+      elsif filtered_ids.include?(pool.profile.id)
+        output <<  graph_entry_string.(pool, 'red')
       else
         output << "  \"#{pool._ct_id}\" [label=\"#{pool.to_digraph_label}\"]\n"
       end

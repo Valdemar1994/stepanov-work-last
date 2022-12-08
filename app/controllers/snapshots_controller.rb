@@ -31,6 +31,6 @@ class SnapshotsController < BaseController
   def snapshot_graph
     snapshot = ActiveSnapshot::Snapshot.find(params[:snapshot_id])
     restore = ::SnapshotRestore.new.call(snapshot)
-    send_file ::GraphGenerator.new.call(restore, current_user.profile.id)
+    send_file ::GraphGenerator.new.call(restore, current_user.profile.id, [])
   end
 end
