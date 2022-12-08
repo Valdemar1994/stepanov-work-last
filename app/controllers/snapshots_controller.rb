@@ -15,6 +15,7 @@ class SnapshotsController < BaseController
   end
   
   def show
+    @today = Date.today
     @snapshots = current_user.pool_snapshots.page(params[:page]).per(5)
     @snapshot = ActiveSnapshot::Snapshot.find(params[:id])
   end

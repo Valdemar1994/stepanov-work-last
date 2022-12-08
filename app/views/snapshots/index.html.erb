@@ -12,7 +12,7 @@
   <% @snapshots.each do |snapshot| %>
     <tr>
       <td class="border px-6 py-3"><%= snapshot.id %></td>
-      <td class="border px-6 py-3"><%= snapshot.identifier %></td>
+      <td class="border px-6 py-3"><%= snapshot.created_at %></td>
       <td class="border px-6 py-3"><%= snapshot.user.profile.first_name %></td>
       <td class="border px-6 py-3"> 
         <%= link_to snapshot_path(snapshot), class:"text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200",
@@ -48,7 +48,7 @@
 
 <div class="justify-center flex items-center mt-8 mb-5">
   <form action="/snapshots">
-    <%= label_tag(:year, select_year(@today)) %>
+    <%= label_tag(:year, select_year(@today, start_year: 2019, end_year: @today.year)) %>
     <%= label_tag(:month, select_month(@today)) %>
     <input type="submit" value="Select date" class= "h-10 px-5 m-2 rounded-md border border-transparent 
     bg-green-700 py-2 px-4 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 
