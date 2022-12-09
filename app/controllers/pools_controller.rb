@@ -5,12 +5,15 @@ class PoolsController < BaseController
     @pool_root = nil
     @select_parents = []
     @select_children = []
- 
+
     @grades = Grade.all
     @specialitys = Speciality.all
 
     @filter_params = filter_params
     @current_pool = current_user.pool_container
+
+    @grade_show = Grade.find(filter_params[:grade_id]).name if filter_params[:grade_id].present?
+    @speciality_show = Speciality.find(filter_params[:speciality_id]).name if filter_params[:speciality_id].present?
 
     if current_user.has_role? :manager || current_user.profile.pool.present?
 

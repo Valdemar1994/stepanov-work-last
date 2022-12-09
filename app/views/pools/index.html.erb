@@ -44,17 +44,17 @@
   
   <div class="justify-center flex items-center mt-3 mb-3 block p-3 rounded-lg shadow-lg bg-white w-1/3 m-auto mb-3">
     <form action="/">
-        <div class="text-center text-lg"> 
-          Filtering by grade and specialization 
-        </div>
+      <div class="text-center text-lg"> 
+        Filtering by grade and specialization 
+      </div>
       <select name="grade_id">
-        <option value="">all</option>
+        <option value=""><%= @grade_show %></option>
         <% @grades.each do |grade| %>
-          <option value=<%= grade.id %>> <%= grade.name %> </option>
+          <option value=<%= grade.id %>><%= grade.name %> </option>
         <% end %>
       </select>
       <select name="speciality_id">
-        <option value="">all</option>
+        <option value=""><%= @speciality_show %></option>
         <% @specialitys.each do |speciality| %>
           <option value=<%= speciality.id %>> <%= speciality.name %> </option>
         <% end %>
