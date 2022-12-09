@@ -47,28 +47,32 @@
       <div class="text-center text-lg"> 
         Filtering by grade and specialization 
       </div>
-      <select name="grade_id">
-        <option value=""><%= @grade_show %></option>
-        <% @grades.each do |grade| %>
-          <option value=<%= grade.id %>><%= grade.name %> </option>
-        <% end %>
-      </select>
-      <select name="speciality_id">
-        <option value=""><%= @speciality_show %></option>
-        <% @specialitys.each do |speciality| %>
-          <option value=<%= speciality.id %>> <%= speciality.name %> </option>
-        <% end %>
-      </select>
+      <%= select("select", "grade_id", @grades.collect {|p|  [ p.name , p.id ]  }, { include_blank: true }) %>
+      <%= select("select",  "speciality_id", @specialitys.collect {|p|  [ p.name , p.id ]  },{ include_blank: true} ) %>
       <input type="submit" value="Select" class= "h-10 px-5 m-2 rounded-md border border-transparent 
        bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 
        focus:ring-blue-700 focus:ring-offset-2 gap-1" >
     </form>
   </div>
 
+  <% if @select_grade.present? && @select_speciality.present? %>
+    <div class="text-center text-lg font-semibold italic mb-2 mt-2"> 
+      Filtering params: Grade - <%= "#{@select_grade}" %>, Speciality - <%= "#{@select_speciality}" %>
+    </div>
+  <% elsif @select_grade.present? && @select_speciality.empty? %>
+    <div class="text-center text-lg font-semibold italic mb-2 mt-2"> 
+      Filtering params: Grade - <%= "#{@select_grade}" %>
+    </div>
+  <% elsif @select_grade.empty? && @select_speciality.present? %>
+    <div class="text-center text-lg font-semibold italic mb-2 mt-2"> 
+      Filtering params: Speciality - <%= "#{@select_speciality}" %>
+    </div>
+  <% end %>
+
   <table class="shadow-lg bg-white border-separate text-center mx-auto">
     <tr>
       <th class="bg-blue-100 border text-center px-6 py-3">ID</th> 
-      <th class="bg-blue-100 border text-center px-6 py-3">Type</th>
+      <th class="bg-blue-100 border text-center px-6 py-3">Relationship to parent</th>
       <th class="bg-blue-100 border text-center px-6 py-3">User Name</th>
       <th class="bg-blue-100 border text-center px-6 py-3">Grade</th>
       <th class="bg-blue-100 border text-center px-6 py-3">Speciality</th>

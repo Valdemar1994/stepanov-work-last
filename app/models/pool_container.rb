@@ -4,7 +4,6 @@ class PoolContainer < ApplicationRecord
   belongs_to :user
 
   def filtered_pools(filter_params)
-    
     grade_id = filter_params[:grade_id]
     speciality_id = filter_params[:speciality_id]
     
