@@ -5,7 +5,7 @@ class CreatePoolContainers < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
-
+    
     add_reference :pools, :pool_container, foreign_key: { on_delete: :cascade }
   end
 end

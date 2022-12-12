@@ -4,24 +4,20 @@ RSpec.describe PoolsController, type: :controller do
   let(:user) { create :user }
   let(:grade) { create :grade }
   let(:speciality) { create :speciality }
-  let(:profile) do
-    create :profile, user: user, grade: grade,
-                     speciality: speciality
-  end
+  let(:profile) { create :profile, user: user, grade: grade, 
+  speciality: speciality }
 
   let(:other_user) { create :user }
   let(:other_grade) { create :grade }
   let(:other_speciality) { create :speciality }
-  let(:other_profile) do
-    create :profile, user: other_user, grade: other_grade,
-                     speciality: other_speciality
-  end
+  let(:other_profile) { create :profile, user: other_user, grade: other_grade, 
+  speciality: other_speciality }
 
   before { sign_in user }
-
+  
   describe '#index' do
     subject { process :index }
-
+    
     it 'manager render index template' do
       subject
       expect(response).to render_template :index
@@ -33,7 +29,7 @@ RSpec.describe PoolsController, type: :controller do
 
     context 'when params is valid' do
       let(:params) { { pool: attributes_for(:pool, profile_id: profile) } }
-
+            
       it 'creates a new pool when user role has manager' do
         user.add_role :manager
         expect { subject }.to change { Pool.count }.by(1)
@@ -68,14 +64,15 @@ RSpec.describe PoolsController, type: :controller do
     end
   end
 
-  describe '#destroy' do
+  describe "#destroy" do
+
     subject { process :destroy, method: :delete, params: params }
 
     context 'when params is valid' do
       let!(:pool) { create :pool, profile_id: profile.id }
       let!(:other_pool) { create :pool, profile_id: other_profile.id, parent_id: pool.id }
       let(:params) { { id: other_pool.id } }
-
+      
       it 'destroy pool when user role has manager' do
         user.add_role :manager
         expect { subject }.to change { Pool.count }.by(-1)
@@ -92,6 +89,7 @@ RSpec.describe PoolsController, type: :controller do
     end
 
     context 'trying destroy root pool' do
+
       let!(:pool) { create :pool, profile_id: profile.id }
       let(:params) { { id: pool.id } }
 
@@ -106,11 +104,13 @@ RSpec.describe PoolsController, type: :controller do
     end
   end
 
-  describe '#pool_graph' do
+  describe "#pool_graph" do
+
     context 'build pool graph to file' do
       let!(:pool) { create :pool, profile_id: profile.id }
 
       it 'pool' do
+
       end
     end
   end

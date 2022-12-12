@@ -2,9 +2,11 @@ class BaseController < ApplicationController
   before_action :authenticate_user!
 
   include Pundit::Authorization
+  
+  include Pagination
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-
+  
   private
 
   def user_not_authorized

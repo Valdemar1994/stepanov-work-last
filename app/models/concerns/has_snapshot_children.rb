@@ -1,10 +1,12 @@
 module HasSnapshotChildren
   extend ActiveSupport::Concern
-
+  
   included do
-    include ActiveSnapshot
 
+    include ActiveSnapshot
+    
     has_snapshot_children do
+
       instance = self.class.find(id)
 
       descendants = instance.descendants.includes(:profile)

@@ -1,20 +1,25 @@
 class ProfileCreatorService
+
   def create_profile(params)
+
     ActiveRecord::Base.transaction do
+      
       user_attributes = params.dig(:user_attributes)
-
+    
       user = User.create!(user_attributes)
-
+      
       role = find_role(params)
       user.add_role :"#{role.name}"
 
-      PoolContainer.create(user: user) if user.has_role? :manager
+      if user.has_role? :manager
+        PoolContainer.create(user: user)
+      end
 
       grade_id = params.dig(:grade_id)
       grade_attributes = params.dig(:grade_attributes)
       grade = find_grade(grade_id, grade_attributes)
       grade = Grade.create!(grade_attributes) if grade.blank?
-
+      
       speciality_id = params.dig(:speciality_id)
       speciality_attributes = params.dig(:speciality_attributes)
       speciality = find_speciality(speciality_id, speciality_attributes)
@@ -32,7 +37,7 @@ class ProfileCreatorService
     grade = nil
     grade = Grade.find_by(id: grade_id) if grade_id.present?
     grade = Grade.find_by(grade_attributes) if grade.blank?
-
+    
     grade
   end
 
@@ -40,7 +45,7 @@ class ProfileCreatorService
     speciality = nil
     speciality = Speciality.find_by(id: speciality_id) if speciality_id.present?
     speciality = Speciality.find_by(speciality_attributes) if speciality.blank?
-
+    
     speciality
   end
 

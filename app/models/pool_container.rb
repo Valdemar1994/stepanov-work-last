@@ -1,4 +1,5 @@
 class PoolContainer < ApplicationRecord
+    
   has_many :pools
   belongs_to :user
 
@@ -6,7 +7,7 @@ class PoolContainer < ApplicationRecord
     
     grade_id = filter_params[:grade_id]
     speciality_id = filter_params[:speciality_id]
-
+    
     pools_scope = pools
 
     if grade_id.present? || speciality_id.present?

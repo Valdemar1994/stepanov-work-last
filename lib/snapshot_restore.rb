@@ -1,4 +1,5 @@
 class SnapshotRestore
+
   def call(snapshot)
     reified_parent, reified_children_hash = snapshot.fetch_reified_items
 

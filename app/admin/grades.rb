@@ -1,4 +1,5 @@
 ActiveAdmin.register Grade do
+
   permit_params :name, :level
 
   index do
@@ -23,7 +24,7 @@ ActiveAdmin.register Grade do
   end
 
   form do |f|
-    f.semantic_errors(*f.object.errors.attribute_names)
+    f.semantic_errors *f.object.errors.attribute_names
     f.inputs do
       f.input :name
       f.input :level

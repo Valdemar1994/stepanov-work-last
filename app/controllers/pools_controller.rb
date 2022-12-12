@@ -8,27 +8,17 @@ class PoolsController < BaseController
 
     @grades = Grade.all
     @specialitys = Speciality.all
-
     @filter_params = filter_params
-  
-    if @filter_params[:grade_id].present?
-      @find_selected_grade = Grade.find(@filter_params[:grade_id])
-      @select_grade = @find_selected_grade.name
-    else
-      @select_grade = ""
+
+    if filter_params[:grade_id].present?
+      @select_grade_name = @grades.find { |g| g.id == filter_params[:grade_id].to_i }&.name
     end
 
-    if @filter_params[:speciality_id].present?
-      @find_selected_speciality = Speciality.find(@filter_params[:speciality_id])
-      @select_speciality = @find_selected_speciality.name
-    else
-      @select_speciality = ""
+    if filter_params[:speciality_id].present?
+      @select_speciality_name = @specialitys.find { |s| s.id == filter_params[:speciality_id].to_i }&.name
     end
 
     @current_pool = current_user.pool_container
-
-    @grade_show = Grade.find(filter_params[:grade_id]).name if filter_params[:grade_id].present?
-    @speciality_show = Speciality.find(filter_params[:speciality_id]).name if filter_params[:speciality_id].present?
 
     if current_user.has_role? :manager || current_user.profile.pool.present?
 
@@ -45,7 +35,6 @@ class PoolsController < BaseController
 
   def create
     params = pool_params.merge(pool_container_id: current_user.pool_container.id)
-    
     @pool = Pool.new(params)
 
     authorize @pool, policy_class: PoolPolicy
@@ -87,8 +76,8 @@ class PoolsController < BaseController
     if current_user.has_role? :manager
       user_pool_container = current_user.pool_container
       pools = user_pool_container.pools.includes(:profile)
-      if filter_params[:grade_id].present? || filter_params[:speciality_id].present?
-        filtered_ids = user_pool_container.filtered_pools(filter_params).pluck(:profile_id)
+      if filter_params_to_graph[:grade_id].present? || filter_params_to_graph[:speciality_id].present?
+        filtered_ids = user_pool_container.filtered_pools(filter_params_to_graph).pluck(:profile_id)
       end
     else
       pool = current_user.profile.pool
@@ -106,11 +95,14 @@ class PoolsController < BaseController
   end
 
   def filter_params
-    if params[:select].present?
-      params_to_filter = params[:select]
-    else
-      params_to_filter = {"grade_id"=>"", "speciality_id"=>""}
+    slice_params = params.slice(:grade_id, :speciality_id)
+
+    params_to_filter = { "grade_id"=>'', "speciality_id"=>'' }
+
+    if slice_params.present?
+      params_to_filter = slice_params if slice_params.present?
     end
+    params_to_filter
   end
 
   def filter_params_to_graph

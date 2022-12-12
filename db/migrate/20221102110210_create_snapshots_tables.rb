@@ -1,8 +1,9 @@
 class CreateSnapshotsTables < ActiveRecord::Migration::Current
+
   def change
     create_table :snapshots do |t|
       t.belongs_to :item, polymorphic: true, null: false, index: true
-      t.string :identifier, null: false, unique: %i[item_id item_type], index: true
+      t.string :identifier, null: false, unique: [:item_id, :item_type], index: true
       t.belongs_to :user, polymorphic: true
       t.text :metadata
       t.datetime :created_at, null: false
@@ -16,4 +17,5 @@ class CreateSnapshotsTables < ActiveRecord::Migration::Current
       t.string :child_group_name
     end
   end
+
 end
