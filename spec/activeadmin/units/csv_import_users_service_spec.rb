@@ -4,9 +4,9 @@ require 'csv'
 RSpec.describe CsvImportUsersService do
   describe 'import good file' do
     let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/activeadmin/units/test_ok.csv'), 'csv') }
-    
+
     subject { CsvImportUsersService.new.convert_save(file) }
-    
+
     it 'create user from csv file' do
       expect { subject }.to change { User.count }.by(1)
     end

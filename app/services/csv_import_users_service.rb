@@ -2,12 +2,11 @@ require 'csv'
 require 'ostruct'
 
 class CsvImportUsersService
-
   attr_accessor :message
-  
+
   def convert_save(csv_file)
     @message = OpenStruct.new(error: '', notice: '')
-      
+
     CSV.foreach(csv_file.path) do |row|
       full_name, email, role, speciality, grade = row
       find_user = User.find_by email: email.strip
@@ -20,16 +19,13 @@ class CsvImportUsersService
       else
 
         ActiveRecord::Base.transaction do
-          
           user = User.create!(email: email.strip, password: 'password', password_confirmation: 'password')
           user.add_role role.strip
 
-          if user.has_role? :manager
-            PoolContainer.create!(user: user)
-          end
+          PoolContainer.create!(user: user) if user.has_role? :manager
 
           @message.notice += "User #{user.email} created; "
-            
+
           speciality_item = Speciality.find_or_create_by!(name: speciality.strip)
 
           grade_arr = grade.split('/')
@@ -42,7 +38,7 @@ class CsvImportUsersService
           last_name = full_name_arr[1]
 
           Profile.find_or_create_by!(first_name: first_name.strip, last_name: last_name.strip,
-          user_id: user.id, speciality_id: speciality_item.id, grade_id: grade_item.id)
+                                     user_id: user.id, speciality_id: speciality_item.id, grade_id: grade_item.id)
         end
       end
     end

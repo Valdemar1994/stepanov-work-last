@@ -1,5 +1,4 @@
 ActiveAdmin.register Speciality do
-
   permit_params :name
 
   index do
@@ -21,11 +20,10 @@ ActiveAdmin.register Speciality do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.attribute_names
+    f.semantic_errors(*f.object.errors.attribute_names)
     f.inputs do
       f.input :name
     end
     f.actions
   end
-
 end

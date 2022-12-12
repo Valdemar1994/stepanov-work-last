@@ -1,5 +1,4 @@
 class Pool < ApplicationRecord
-
   before_destroy :change_parent_pools
 
   belongs_to :profile
@@ -15,11 +14,13 @@ class Pool < ApplicationRecord
 
   def change_parent_pools
     pools_for_update = Pool.where(parent_id: profile.pool.id)
-    pools_for_update.each {|pool| pool.update(parent_id: profile.pool.parent_id)}
+    pools_for_update.each { |pool| pool.update(parent_id: profile.pool.parent_id) }
   end
 
   def self.to_dot_digraph(tree_scope, highlight_id, filtered_ids)
-    id_to_instance = tree_scope.reduce({}) { |h, pool| h[pool.id] = pool; h }
+    id_to_instance = tree_scope.each_with_object({}) do |pool, h|
+      h[pool.id] = pool
+    end
     output = StringIO.new
     output << "digraph G {\n"
     tree_scope.each do |pool|
@@ -31,15 +32,15 @@ class Pool < ApplicationRecord
         " \"#{pool._ct_id}\" [label=\"#{pool.to_digraph_label}\" color=\"#{color}\" fontcolor=\"#{color}\"]\n"
       end
 
-      if highlight_id == pool.profile.id && filtered_ids.include?(pool.profile.id)
-        output <<  graph_entry_string.(pool, 'blue')
-      elsif highlight_id == pool.profile.id
-        output <<  graph_entry_string.(pool, 'green')
-      elsif filtered_ids.include?(pool.profile.id)
-        output <<  graph_entry_string.(pool, 'red')
-      else
-        output << "  \"#{pool._ct_id}\" [label=\"#{pool.to_digraph_label}\"]\n"
-      end
+      output << if highlight_id == pool.profile.id && filtered_ids.include?(pool.profile.id)
+                  graph_entry_string.call(pool, 'blue')
+                elsif highlight_id == pool.profile.id
+                  graph_entry_string.call(pool, 'green')
+                elsif filtered_ids.include?(pool.profile.id)
+                  graph_entry_string.call(pool, 'red')
+                else
+                  "  \"#{pool._ct_id}\" [label=\"#{pool.to_digraph_label}\"]\n"
+                end
     end
     output << "}\n"
     output.string

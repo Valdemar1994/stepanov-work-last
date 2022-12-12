@@ -1,8 +1,8 @@
 ActiveAdmin.register Profile do
   permit_params :first_name, :last_name, :grade_id, :speciality_id, :user_id,
-  user_attributes: [:id, :email, :password, :password_confirmation],
-  grade_attributes: [:id, :name, :level],
-  speciality_attributes: [:id, :name]
+                user_attributes: %i[id email password password_confirmation],
+                grade_attributes: %i[id name level],
+                speciality_attributes: %i[id name]
 
   index do
     id_column
@@ -17,13 +17,12 @@ ActiveAdmin.register Profile do
 
   controller do
     def create
-
       params_validator = ProfileParamsValidator.new(profile_params)
 
       if params_validator.valid?
         ProfileCreatorService.new.create_profile(profile_params.to_unsafe_hash)
         redirect_to admin_root_path
-        flash[:notice] = "Profile created!"
+        flash[:notice] = 'Profile created!'
       else
         redirect_to new_admin_profile_path
         flash[:error] = params_validator.errors
@@ -38,7 +37,7 @@ ActiveAdmin.register Profile do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.attribute_names
+    f.semantic_errors(*f.object.errors.attribute_names)
     f.inputs 'Profile' do
       f.input :first_name
       f.input :last_name
@@ -53,46 +52,41 @@ ActiveAdmin.register Profile do
 
     f.inputs 'Select Speciality' do
       f.input :speciality
-      f.inputs "Or type speciality", for: [:speciality, f.object.speciality || Speciality.new] do |p|
+      f.inputs 'Or type speciality', for: [:speciality, f.object.speciality || Speciality.new] do |p|
         p.input :name
       end
     end
-  
+
     f.inputs 'Select Grade' do
       f.input :grade
-      f.inputs "Or type grade", for: [:grade, f.object.grade || Grade.new] do |p|
+      f.inputs 'Or type grade', for: [:grade, f.object.grade || Grade.new] do |p|
         p.input :name
         p.input :level
       end
     end
-    
+
     f.actions
   end
 
-  action_item :only => :index do
-    link_to 'Upload CSV', :action => 'upload_csv'
+  action_item only: :index do
+    link_to 'Upload CSV', action: 'upload_csv'
   end
 
   collection_action :upload_csv do
-    render "admin/csv/upload_csv"
+    render 'admin/csv/upload_csv'
   end
 
   collection_action :import_csv, method: :post do
-    
     if params[:dump].present?
-    
+
       import = CsvImportUsersService.new
       import.convert_save(params[:dump][:file])
       redirect_to({ action: :index })
-      
-      if import.message.notice.present?
-        flash[:notice] = import.message.notice
-      end
 
-      if import.message.error.present?
-        flash[:error] = import.message.error
-      end
-      
+      flash[:notice] = import.message.notice if import.message.notice.present?
+
+      flash[:error] = import.message.error if import.message.error.present?
+
     else
       redirect_to({ action: :upload_csv })
       flash[:error] = 'File is not exists!'

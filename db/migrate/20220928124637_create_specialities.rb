@@ -7,6 +7,5 @@ class CreateSpecialities < ActiveRecord::Migration[7.0]
     end
 
     add_index :specialities, :name
-
   end
 end

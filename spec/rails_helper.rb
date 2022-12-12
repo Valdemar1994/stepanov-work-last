@@ -8,7 +8,7 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rspec/rails'
 require 'spec_helper'
 require 'database_cleaner'
-require 'helpers/sign_in.rb'
+require 'helpers/sign_in'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

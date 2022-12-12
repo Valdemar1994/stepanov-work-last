@@ -1,5 +1,5 @@
-require "spec_helper"
- 
+require 'spec_helper'
+
 def sign_in(admin_user)
   visit admin_user_session_path
   fill_in 'admin_user_email', with: admin_user.email

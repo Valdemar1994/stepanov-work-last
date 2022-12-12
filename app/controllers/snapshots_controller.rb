@@ -1,20 +1,28 @@
 class SnapshotsController < BaseController
-
   def index
-    @current_date = Date.today
-    select_year = params.dig(:date, :year).to_i
-    select_month = Date::ABBR_MONTHNAMES[params.dig(:date, :month).to_i]
-
-    if select_year.present? && select_month.present?
-      date = "#{select_month} #{select_year}"
-      @current_date = Date.parse(date)
+    @today = Date.today
+    year = params.dig(:date, :year).to_i
+    month = Date::ABBR_MONTHNAMES[params.dig(:date, :month).to_i]
+    
+    if year.present? && month.present?
+      @month = params.dig(:date, :month).to_i
+      @year = year
+      date = "#{month} #{@year}"
       @snapshots = current_user.pool_snapshots_by_date(date).page(params[:page]).per(5)
     else
+      @month = @today
+      @year = @today
       @snapshots = current_user.pool_snapshots.page(params[:page]).per(5)
     end
   end
-  
+
   def show
+    @today = Date.today
+    year = params.dig(:date, :year).to_i
+    month = Date::ABBR_MONTHNAMES[params.dig(:date, :month).to_i]
+    @month = params.dig(:date, :month).to_i if month.present?
+    @year = year if year.present?
+
     @snapshots = current_user.pool_snapshots.page(params[:page]).per(5)
     @snapshot = ActiveSnapshot::Snapshot.find(params[:id])
   end
